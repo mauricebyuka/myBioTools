@@ -12,22 +12,54 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-q', '--query', help='Input fasta', required='True')
 parser.add_argument('-ht', '--hit_out', help='Output file for hits', required=True)
 parser.add_argument('-nh', '--no_hit', help='Output file for no hits', default='no_hit.tsv')
-parser.add_argument('-db', '--blastdb', help='Path to the blast database')
+parser.add_argument('-db', '--blastdb', help='Path to the blast database', default='/media/mpb5554/data2/blastdb/nt')
 parser.add_argument('-s', '--short', help='short query sequences', action='store_true')
-
+parser.add_argument('-g', '--gi', help='restrict search to gilist ', choices=['archae', 'bacteria', 'eukaryota', 'virus', 'all'], default='all')
+parser.add_argument('-ng', '--neg_gi', help='exclude gilist from search', choices=['archae', 'bacteria', 'eukaryota', 'virus', 'none'], default='none')
 
 args = parser.parse_args()
 
 infile = args.query
 blast_results = args.hit_out
-base_dir = os.path.dirname(blast_results)
+base_dir = os.path.dirname(os.path.abspath(blast_results))
+base_name = os.path.basename(blast_results).split('.')[0]
 if not os.path.exists(base_dir):
     os.makedirs(base_dir)
-no_hits = os.path.join(base_dir, args.no_hit)
-blast_out = os.path.join(base_dir, 'blast_results.xml')
+
+nh_path = args.no_hit
+
+if not nh_path:
+    no_hits = os.path.join(base_dir, 'no_hit.tsv')
+else:
+    no_hits = nh_path
+
+blast_out = os.path.join(base_dir, f'{base_name}_blast_results.xml')
 cpus = int(int(os.cpu_count()) * 3 / 4)
-cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
-cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
+
+######
+gil = args.gi
+
+if gil == 'all':
+    cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
+    cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
+else:
+    gilis = os.path.join(os.path.dirname(args.blastdb), f'gi_lists/{gil}')
+    cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -gilist {gilis} -query {infile} -out {blast_out} -outfmt 5'
+    cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -gilist {gilis} -query {infile} -out {blast_out} -outfmt 5'
+######
+
+######
+ngil = args.neg_gi
+
+if ngil == 'none':
+    cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
+    cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
+else:
+    ngilis = os.path.join(os.path.dirname(args.blastdb), f'gi_lists/{ngil}')
+    cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -negative_gilist {ngilis} -query {infile} -out {blast_out} -outfmt 5'
+    cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -negative_gilist {ngilis} -query {infile} -out {blast_out} -outfmt 5'
+######
+
 if not os.path.exists(blast_out):
     print("\n Runing BLAST. May take some time ......\n")
     if args.short:
@@ -66,6 +98,7 @@ if os.path.exists(blast_out):
                 print('\tHit start: ', best_hsp.hit_start_all)
                 print('\tHit end: ', best_hsp.hit_end_all)
                 print('\t--------------------------------')
+                print('\tQuery length: ', qlen)
                 print('\tQuery start: ', best_hsp.query_start_all)
                 print('\tQuery end: ', best_hsp.query_end_all)
                 print('\n')
