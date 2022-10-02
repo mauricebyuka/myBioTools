@@ -38,26 +38,26 @@ cpus = int(int(os.cpu_count()) * 3 / 4)
 
 ######
 gil = args.gi
+ngil = args.neg_gi
 
-if gil == 'all':
+if gil == 'all' and ngil == 'none':
     cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
     cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
-else:
+    print('\nNo gi list provided: The entire nt database will be searched.\n')
+elif gil != 'all' and ngil == 'none':
     gilis = os.path.join(os.path.dirname(args.blastdb), f'gi_lists/{gil}')
     cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -gilist {gilis} -query {infile} -out {blast_out} -outfmt 5'
     cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -gilist {gilis} -query {infile} -out {blast_out} -outfmt 5'
-######
+    print(f'\nA gi list was provided. The search will be limited to the {gil} entries.\n')
 
-######
-ngil = args.neg_gi
-
-if ngil == 'none':
-    cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
-    cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
-else:
+elif ngil != 'none' and gil == 'all':
     ngilis = os.path.join(os.path.dirname(args.blastdb), f'gi_lists/{ngil}')
     cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -negative_gilist {ngilis} -query {infile} -out {blast_out} -outfmt 5'
     cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -negative_gilist {ngilis} -query {infile} -out {blast_out} -outfmt 5'
+    print(f'A negative gi list was provided. {ngil} will be excluded from search.')
+else:
+    print('\nOnly one of -g (--gi) or -ng (--neg_gi) can be used. Not both at the same time.\n')
+    sys.exit()
 ######
 
 if not os.path.exists(blast_out):
@@ -65,15 +65,15 @@ if not os.path.exists(blast_out):
     if args.short:
         os.system(cmd_s)
     else:
-        os.system(cmd)   
+        os.system(cmd)
 else:
-    print("\n Blast results file exits. Extracting data from existing file.\n")
+    print("\n Blast results file exists. Extracting data from existing file.\n")
 
 if os.path.exists(blast_out):
     with open(blast_results, "w") as results, open(no_hits, "w") as alt:
         res_writer = csv.writer(results, dialect=csv.excel_tab)
         alt_writer = csv.writer(alt, dialect=csv.excel_tab)
-        res_writer.writerow(['Query_id', 'Best hit', 'Accession #', 'Percent ID', 'Hit length', 'Hit start', 'Hit end', 'Query length', 'Query span',  'Query cov', 'Query start', 'Query end'])
+        res_writer.writerow(['Query_id', 'Best hit', 'Accession #', 'Percent ID', 'Hit length', 'Hit start', 'Hit end', 'Query length', 'Query span', 'Query cov', 'Query start', 'Query end'])
         alt_writer.writerow(['Query_id', 'Best hit', 'Accession #', 'Percent ID', 'Hit length', 'Query length', 'HSP length', 'Hit start', 'Hit end', 'Query cov', 'q_start', 'q_end'])
         for record in SearchIO.parse(blast_out, "blast-xml"):
 
