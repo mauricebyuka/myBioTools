@@ -1,6 +1,18 @@
 # myBioTools
 This repository contains the scripts that automate some of the tasks that I use on a regular basis. They were not designed with a general case usage in mind but rather for perfoming specific tasks, although some of them may allow some level of flexibility. Below is a list of the scripts and their usage. 
 
+### biosampleParser
+
+This is a Jupyter notebook contaiing the code for parsing and extract metadata from an xml file containing biosample information. The parsed file (the `all_biosamples` variable) can be the result of search on NCBI's [Biosample database](https://www.ncbi.nlm.nih.gov/biosample/). If the contains data for multiple organisms, the species of interest has to be specified (the `species` variable). Cells that can be edited begin with the comment: `# Edit this cell` or `# Can be edited`. 
+
+### Example
+
+The folder `data` contains an example of a file that was obtained by searching the database using `Klebsiella pneumoniae` as the search key words. Different organisms and/or additional key words can be used.
+
+![Search example](https://github.com/mauricebyuka/myBioTools/blob/main/data/klebsiella_biosamp.png)
+
+Runing the notebook should result in a file named `Klebsiella_metadata.csv` in the same folder.
+
 ### quickBlaster
 
 This is used for quick blast screening of a set of sequences in a fast file. It is a simple blastn wrapper that outputs the best alignment for each sequence in the query file. This may not be useful if one wants to look at multiple hits and compare them.
