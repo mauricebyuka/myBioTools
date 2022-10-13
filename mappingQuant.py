@@ -14,9 +14,12 @@ import argparse
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-f", "--bamDir",
+
+required = parser.add_argument_group('Required arguments')
+
+required.add_argument("-f", "--bamDir",
                     help="Folder containing bam files.", required=True)
-parser.add_argument("-o", "--outFile",
+required.add_argument("-o", "--outFile",
                     help=f"Output file", required=True)
 args = parser.parse_args()
 
@@ -71,13 +74,4 @@ with open(mappReport, 'w') as report:
         print(f'--- Added data for sample: {sample} ---')
 
 print('\nDone!\n')
-
-
-
-
-
-
-
-
-
 

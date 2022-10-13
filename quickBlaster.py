@@ -7,15 +7,22 @@ import sys
 import argparse
 from Bio import SearchIO
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(add_help=False)
 
-parser.add_argument('-q', '--query', help='Input fasta', required='True')
-parser.add_argument('-ht', '--hit_out', help='Output file for hits', required=True)
-parser.add_argument('-nh', '--no_hit', help='Output file for no hits', default='no_hit.tsv')
-parser.add_argument('-db', '--blastdb', help='Path to the blast database', default='/media/mpb5554/data2/blastdb/nt')
-parser.add_argument('-s', '--short', help='short query sequences', action='store_true')
-parser.add_argument('-g', '--gi', help='restrict search to gilist ', choices=['archae', 'bacteria', 'eukaryota', 'virus', 'all'], default='all')
-parser.add_argument('-ng', '--neg_gi', help='exclude gilist from search', choices=['archae', 'bacteria', 'eukaryota', 'virus', 'none'], default='none')
+required = parser.add_argument_group('Required arguments')
+required.add_argument('-q', '--query', help='Input fasta', required='True')
+required.add_argument('-ht', '--hit_out', help='Output file for hits', required=True)
+required.add_argument('-db', '--blastdb', help='Path to the blast database', default='${BLASTdb}/nt')
+
+optional = parser.add_argument_group('Optional arguments')
+optional.add_argument("-h", "--help", action="help", help="show this help message and exit")
+optional.add_argument('-nh', '--no_hit', help='Output file for no hits', default='no_hit.tsv')
+optional.add_argument('-s', '--short', help='short query sequences', action='store_true')
+
+filtering = parser.add_argument_group('Arguments for filtering')
+
+filtering.add_argument('-g', '--gi', help='restrict search to gilist ', choices=['archae', 'bacteria', 'eukaryota', 'virus', 'all'], default='all')
+filtering.add_argument('-ng', '--neg_gi', help='exclude gilist from search', choices=['archae', 'bacteria', 'eukaryota', 'virus', 'none'], default='none')
 
 args = parser.parse_args()
 
