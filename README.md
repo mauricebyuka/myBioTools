@@ -3,9 +3,9 @@ This repository contains the scripts that automate some of the tasks that I use 
 
 ### biosampleParser
 
-This is a Jupyter notebook contaiing the code for parsing and extract metadata from an xml file containing biosample information. The parsed file (the `all_biosamples` variable) can be the result of search on NCBI's [Biosample database](https://www.ncbi.nlm.nih.gov/biosample/). If the contains data for multiple organisms, the species of interest has to be specified (the `species` variable). Cells that can be edited begin with the comment: `# Edit this cell` or `# Can be edited`. 
+This is a Jupyter notebook containg the code for parsing and extract metadata from an xml file with biosample information. The parsed file (the `all_biosamples` variable) can be the result of search on NCBI's [Biosample database](https://www.ncbi.nlm.nih.gov/biosample/). If the contains data for multiple organisms, the species of interest has to be specified (the `species` variable). Cells that can be edited begin with the comment: `# Edit this cell` or `# Can be edited`. I believe the search can also be automated.
 
-### Example
+#### Example
 
 The folder `data` contains an example of a file that was obtained by searching the database using `Klebsiella pneumoniae` as the search key words. Different organisms and/or additional key words can be used.
 
@@ -67,7 +67,7 @@ optional arguments:
 
 ### mappingQuant
 
-Teh script works on a collection of pairs of alignment (bam) files : raw files and dedupped files (after removal of aptical and PCR duplicates). The script outputs a table with mapping statistics. At this point, I use the script to works with the output files from the [GenMapViz](https://github.com/mauricebyuka/GenMapViz) program. Raw bam files have to end in _raw.bam and dedupped files in _dedupped.bam.
+Teh script works on a collection of pairs of alignment (bam) files : raw files and dedupped files (after removal of aptical and PCR duplicates). The script outputs a table with mapping statistics. At this point, I use the script to works with the output files from the [GenMapViz](https://github.com/mauricebyuka/GenMapViz) program (**Not yet public!**). Raw bam files have to end in _raw.bam and dedupped files in _dedupped.bam.
 
 Working on making it more flexible.
 
