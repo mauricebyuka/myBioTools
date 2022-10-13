@@ -1,7 +1,7 @@
-# 1. myBioTools
+# myBioTools
 This repository contains the scripts that automate some of the tasks that I use on a regular basis. They were not designed with a general case usage in mind but rather for perfoming specific tasks, although some of them may allow some level of flexibility. Below is a list of the scripts and their usage.
 
-### biosampleParser
+### 1. biosampleParser
 
 This is a Jupyter notebook containg the code for parsing and extract metadata from an xml file with biosample information. The parsed file (the `all_biosamples` variable) can be the result of search on NCBI's [Biosample database](https://www.ncbi.nlm.nih.gov/biosample/). If the contains data for multiple organisms, the species of interest has to be specified (the `species` variable). Cells that can be edited begin with the comment: `# Edit this cell` or `# Can be edited`. I believe the search can also be automated.
 
