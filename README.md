@@ -20,8 +20,8 @@ This is used for quick blast screening of a set of sequences in a fast file. It 
 **Dependancies:** [Command line Blast](https://www.ncbi.nlm.nih.gov/books/NBK279690/), [Biopython](https://biopython.org/wiki/Download).
 
 ```
-usage: quickBlaster.py -q QUERY -ht HIT_OUT [-db BLASTDB] [-h] [-nh NO_HIT] [-s] [-g {archae,bacteria,eukaryota,virus,all}]
-                       [-ng {archae,bacteria,eukaryota,virus,none}]
+usage: quickBlaster.py -q QUERY -ht HIT_OUT [-db BLASTDB] [-h] [-nh NO_HIT] [-s] [-g {archae,bacteria,eukaryota,virus}]
+                       [-ng {archae,bacteria,eukaryota,virus}]
 
 Required arguments:
   -q QUERY, --query QUERY
@@ -38,10 +38,10 @@ Optional arguments:
   -s, --short           short query sequences
 
 Arguments for filtering:
-  -g {archae,bacteria,eukaryota,virus,all}, --gi {archae,bacteria,eukaryota,virus,all}
+  -g {archae,bacteria,eukaryota,virus}, --gi {archae,bacteria,eukaryota,virus}
                         restrict search to gilist
-  -ng {archae,bacteria,eukaryota,virus,none}, --neg_gi {archae,bacteria,eukaryota,virus,none}
-                        exclude gilist from searc
+  -ng {archae,bacteria,eukaryota,virus}, --neg_gi {archae,bacteria,eukaryota,virus}
+                        exclude gilist from search
 ```
 
 ### 3. seqCleaner
