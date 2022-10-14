@@ -21,8 +21,8 @@ optional.add_argument('-s', '--short', help='short query sequences', action='sto
 
 filtering = parser.add_argument_group('Arguments for filtering')
 
-filtering.add_argument('-g', '--gi', help='restrict search to gilist ', choices=['archae', 'bacteria', 'eukaryota', 'virus', 'all'], default='all')
-filtering.add_argument('-ng', '--neg_gi', help='exclude gilist from search', choices=['archae', 'bacteria', 'eukaryota', 'virus', 'none'], default='none')
+filtering.add_argument('-g', '--gi', help='restrict search to gilist ', choices=['archae', 'bacteria', 'eukaryota', 'virus'], default='all')
+filtering.add_argument('-ng', '--neg_gi', help='exclude gilist from search', choices=['archae', 'bacteria', 'eukaryota', 'virus'], default='none')
 
 args = parser.parse_args()
 
@@ -116,11 +116,3 @@ if os.path.exists(blast_out):
     print(" Done!!\n")
 else:
     print(" Blast results file was not found!\n")
-
-# print(f'{acession}:: {name}:: {percent_id}')
-# print('\tHit start: ', best_hsp.hit_start)
-# print('\tHit end: ', best_hsp.hit_end)
-# print('\t--------------------------------')
-# print('\tQuery start: ', best_hsp.hit_start)
-# print('\tQuery end: ', best_hsp.hit_all)
-# print('')
