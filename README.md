@@ -1,5 +1,5 @@
 # myBioTools
-This repository contains the scripts that automate some of the tasks that I use on a regular basis. They were not designed with a general case usage in mind but rather for perfoming specific tasks, although some of them may allow some level of flexibility. Below is a list of the scripts and their usage.
+This repository contains the scripts that automate some of the tasks that I perform on a regular basis. They were not designed with a general case usage in mind but rather for perfoming specific tasks, although some of them may allow some level of flexibility. Below is a list of the scripts and their usage.
 
 ### 1. biosampleParser
 
