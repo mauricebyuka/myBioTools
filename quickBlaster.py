@@ -17,7 +17,8 @@ required.add_argument('-db', '--blastdb', help='Path to the blast database', def
 optional = parser.add_argument_group('Optional arguments')
 optional.add_argument("-h", "--help", action="help", help="show this help message and exit")
 optional.add_argument('-nh', '--no_hit', help='Output file for no hits', default='no_hit.tsv')
-optional.add_argument('-s', '--short', help='short query sequences', action='store_true')
+optional.add_argument('-s', '--short', help='Short query sequences', action='store_true')
+optional.add_argument('-c', '--clean', help='Delete intermediate xml files', action='store_true')
 
 filtering = parser.add_argument_group('Arguments for filtering')
 
@@ -113,6 +114,10 @@ if os.path.exists(blast_out):
                 res_writer.writerow([query_id, name, accession, percent_id, best_hit.seq_len, hstart, hend, qlen, best_hsp.query_span, qcov, qstart, qend])
             else:
                 alt_writer.writerow([record.id, "None found", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"])
+
+    cleaning = args.clean
+    if cleaning:
+        os.system(f'rm {blast_out}')
     print(" Done!!\n")
 else:
     print(" Blast results file was not found!\n")
