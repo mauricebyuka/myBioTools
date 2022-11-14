@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser(add_help=False)
 required = parser.add_argument_group('Required arguments')
 required.add_argument('-q', '--query', help='Input fasta', required='True')
 required.add_argument('-ht', '--hit_out', help='Output file for hits', required=True)
-required.add_argument('-db', '--blastdb', help='Path to the blast database', default='${BLASTdb}/nt')
+required.add_argument('-db', '--blastdb', help='Path to the blast database (unless $BLASTdb is on the system path.)', default='${BLASTdb}/nt')
 
 optional = parser.add_argument_group('Optional arguments')
 optional.add_argument("-h", "--help", action="help", help="show this help message and exit")
@@ -22,8 +22,8 @@ optional.add_argument('-c', '--clean', help='Delete intermediate xml files', act
 
 filtering = parser.add_argument_group('Arguments for filtering')
 
-filtering.add_argument('-g', '--gi', help='restrict search to gilist ', choices=['archae', 'bacteria', 'eukaryota', 'virus'], default='all')
-filtering.add_argument('-ng', '--neg_gi', help='exclude gilist from search', choices=['archae', 'bacteria', 'eukaryota', 'virus'], default='none')
+filtering.add_argument('-g', '--gi', help='restrict search to specified domain gilist ', choices=['archae', 'bacteria', 'eukaryota', 'virus'], default='all')
+filtering.add_argument('-ng', '--neg_gi', help='exclude specified domain gilist from search', choices=['archae', 'bacteria', 'eukaryota', 'virus'], default='none')
 
 args = parser.parse_args()
 
@@ -51,7 +51,7 @@ ngil = args.neg_gi
 if gil == 'all' and ngil == 'none':
     cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
     cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
-    print('\nNo gi list provided: The entire nt database will be searched.\n')
+    print('\nNo gi list provided: The entire database will be searched.\n')
 elif gil != 'all' and ngil == 'none':
     gilis = os.path.join(os.path.dirname(args.blastdb), f'gi_lists/{gil}')
     cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -gilist {gilis} -query {infile} -out {blast_out} -outfmt 5'
@@ -81,7 +81,7 @@ if os.path.exists(blast_out):
     with open(blast_results, "w") as results, open(no_hits, "w") as alt:
         res_writer = csv.writer(results, dialect=csv.excel_tab)
         alt_writer = csv.writer(alt, dialect=csv.excel_tab)
-        res_writer.writerow(['Query_id', 'Best hit', 'Accession #', 'Percent ID', 'Hit length', 'Hit start', 'Hit end', 'Query length', 'Query span', 'Query cov', 'Query start', 'Query end'])
+        res_writer.writerow(['Query_id', 'Best hit', 'Accession #', 'Percent ID', 'Hit length', 'Hit start', 'Hit end', 'Query length', 'Query span', 'Query cov', 'Query start', 'Query end', 'Query frame', 'Hit frame'])
         alt_writer.writerow(['Query_id', 'Best hit', 'Accession #', 'Percent ID', 'Hit length', 'Query length', 'HSP length', 'Hit start', 'Hit end', 'Query cov', 'q_start', 'q_end'])
         for record in SearchIO.parse(blast_out, "blast-xml"):
 
@@ -102,6 +102,8 @@ if os.path.exists(blast_out):
                 hend = best_hsp.hit_end
                 qlen = record.seq_len
                 qcov = str(round(((best_hsp.query_span / qlen) * 100), 2)) + "%"
+                hframe = best_hsp.hit_frame
+                qframe = best_hsp.query_frame
                 print(f' {query_id}::{accession}::{name}::{percent_id}::{qcov}')
                 print('\tHit start: ', best_hsp.hit_start_all)
                 print('\tHit end: ', best_hsp.hit_end_all)
@@ -111,7 +113,7 @@ if os.path.exists(blast_out):
                 print('\tQuery end: ', best_hsp.query_end_all)
                 print('\n')
 
-                res_writer.writerow([query_id, name, accession, percent_id, best_hit.seq_len, hstart, hend, qlen, best_hsp.query_span, qcov, qstart, qend])
+                res_writer.writerow([query_id, name, accession, percent_id, best_hit.seq_len, hstart, hend, qlen, best_hsp.query_span, qcov, qstart, qend, qframe, hframe])
             else:
                 alt_writer.writerow([record.id, "None found", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"])
 
