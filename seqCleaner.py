@@ -19,6 +19,7 @@ infile = args.input_fasta
 outfile = args.output_fasta
 minlen = args.min_seqlen
 forceOverwrite = args.force
+# Testing
 
 
 def getREcNumLens(file): # Get the number of records, lenths of the smallest and largest records.
