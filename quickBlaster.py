@@ -10,15 +10,16 @@ from Bio import SearchIO
 parser = argparse.ArgumentParser(add_help=False)
 
 required = parser.add_argument_group('Required arguments')
-required.add_argument('-q', '--query', help='Input fasta', required='True')
+required.add_argument('-q', '--query', help='Input fasta', required=True)
 required.add_argument('-ht', '--hit_out', help='Output file for hits', required=True)
-required.add_argument('-db', '--blastdb', help='Path to the blast database (unless $BLASTdb is on the system path.)', default='${BLASTdb}/nt')
+required.add_argument('-db', '--blastdb', help='Path to the blast database', required=True)
 
 optional = parser.add_argument_group('Optional arguments')
 optional.add_argument("-h", "--help", action="help", help="show this help message and exit")
 optional.add_argument('-nh', '--no_hit', help='Output file for no hits', default='no_hit.tsv')
 optional.add_argument('-s', '--short', help='Short query sequences', action='store_true')
 optional.add_argument('-c', '--clean', help='Delete intermediate xml files', action='store_true')
+optional.add_argument('-t', '--threads', help='Threads to be used by blastn [Default: 3/4 of available cpus]')
 
 filtering = parser.add_argument_group('Arguments for filtering')
 
@@ -42,7 +43,12 @@ else:
     no_hits = nh_path
 
 blast_out = os.path.join(base_dir, f'{base_name}_blast_results.xml')
-cpus = int(int(os.cpu_count()) * 3 / 4)
+
+Threads = args.threads
+if Threads:
+    cpus = Threads
+else:
+    cpus = int(int(os.cpu_count()) * 3 / 4)
 
 ######
 gil = args.gi
@@ -71,8 +77,10 @@ else:
 if not os.path.exists(blast_out):
     print("\n Runing BLAST. May take some time ......\n")
     if args.short:
+        print(f'\n\tRunning--->: {cmd_s}\n')
         os.system(cmd_s)
     else:
+        print(f'\n\tRunning--->: {cmd}\n')
         os.system(cmd)
 else:
     print("\n Blast results file exists. Extracting data from existing file.\n")
