@@ -17,6 +17,7 @@ required.add_argument('-db', '--blastdb', help='Path to the blast database', req
 optional = parser.add_argument_group('Optional arguments')
 optional.add_argument("-h", "--help", action="help", help="show this help message and exit")
 optional.add_argument('-nh', '--no_hit', help='Output file for no hits', default='no_hit.tsv')
+optional.add_argument('-p', '--blastProgram', help='Blast program to be used', choices=['blastn', 'blastp'], default='blastn')
 optional.add_argument('-s', '--short', help='Short query sequences', action='store_true')
 optional.add_argument('-c', '--clean', help='Delete intermediate xml files', action='store_true')
 optional.add_argument('-t', '--threads', help='Threads to be used by blastn [Default: 3/4 of available cpus]')
@@ -53,25 +54,53 @@ else:
 ######
 gil = args.gi
 ngil = args.neg_gi
+prog = args.blastProgram
 
-if gil == 'all' and ngil == 'none':
-    cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
-    cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
-    print('\nNo gi list provided: The entire database will be searched.\n')
-elif gil != 'all' and ngil == 'none':
-    gilis = os.path.join(os.path.dirname(args.blastdb), f'gi_lists/{gil}')
-    cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -gilist {gilis} -query {infile} -out {blast_out} -outfmt 5'
-    cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -gilist {gilis} -query {infile} -out {blast_out} -outfmt 5'
-    print(f'\nA gi list was provided. The search will be limited to the {gil} entries.\n')
 
-elif ngil != 'none' and gil == 'all':
-    ngilis = os.path.join(os.path.dirname(args.blastdb), f'gi_lists/{ngil}')
-    cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -negative_gilist {ngilis} -query {infile} -out {blast_out} -outfmt 5'
-    cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -negative_gilist {ngilis} -query {infile} -out {blast_out} -outfmt 5'
-    print(f'A negative gi list was provided. {ngil} will be excluded from search.')
-else:
-    print('\nOnly one of -g (--gi) or -ng (--neg_gi) can be used. Not both at the same time.\n')
-    sys.exit()
+def cmdgen(program, gil,ngil):
+    if gil == 'all' and ngil == 'none':
+        cmd = f'{program} -num_threads {cpus} -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
+        cmd_s = f'{program} -num_threads {cpus} -task blastn-short -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
+        print('\nNo gi list provided: The entire database will be searched.\n')
+    elif gil != 'all' and ngil == 'none':
+        gilis = os.path.join(os.path.dirname(args.blastdb), f'gi_lists/{gil}')
+        cmd = f'{program} -num_threads {cpus} -db {args.blastdb} -gilist {gilis} -query {infile} -out {blast_out} -outfmt 5'
+        cmd_s = f'{program} -num_threads {cpus} -task blastn-short -db {args.blastdb} -gilist {gilis} -query {infile} -out {blast_out} -outfmt 5'
+        print(f'\nA gi list was provided. The search will be limited to the {gil} entries.\n')
+
+    elif ngil != 'none' and gil == 'all':
+        ngilis = os.path.join(os.path.dirname(args.blastdb), f'gi_lists/{ngil}')
+        cmd = f'{program} -num_threads {cpus} -db {args.blastdb} -negative_gilist {ngilis} -query {infile} -out {blast_out} -outfmt 5'
+        cmd_s = f'{program} -num_threads {cpus} -task blastn-short -db {args.blastdb} -negative_gilist {ngilis} -query {infile} -out {blast_out} -outfmt 5'
+        print(f'A negative gi list was provided. {ngil} will be excluded from search.')
+    else:
+        print('\nOnly one of -g (--gi) or -ng (--neg_gi) can be used. Not both at the same time.\n')
+        sys.exit()
+
+    return [cmd, cmd_s]
+
+commands = cmdgen(prog, gil,ngil)
+cmd = commands[0]
+cmd_s = commands[1]
+
+# if gil == 'all' and ngil == 'none':
+#     cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
+#     cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -query {infile} -out {blast_out} -outfmt 5'
+#     print('\nNo gi list provided: The entire database will be searched.\n')
+# elif gil != 'all' and ngil == 'none':
+#     gilis = os.path.join(os.path.dirname(args.blastdb), f'gi_lists/{gil}')
+#     cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -gilist {gilis} -query {infile} -out {blast_out} -outfmt 5'
+#     cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -gilist {gilis} -query {infile} -out {blast_out} -outfmt 5'
+#     print(f'\nA gi list was provided. The search will be limited to the {gil} entries.\n')
+
+# elif ngil != 'none' and gil == 'all':
+#     ngilis = os.path.join(os.path.dirname(args.blastdb), f'gi_lists/{ngil}')
+#     cmd = f'blastn -num_threads {cpus} -db {args.blastdb} -negative_gilist {ngilis} -query {infile} -out {blast_out} -outfmt 5'
+#     cmd_s = f'blastn -num_threads {cpus} -task blastn-short -db {args.blastdb} -negative_gilist {ngilis} -query {infile} -out {blast_out} -outfmt 5'
+#     print(f'A negative gi list was provided. {ngil} will be excluded from search.')
+# else:
+#     print('\nOnly one of -g (--gi) or -ng (--neg_gi) can be used. Not both at the same time.\n')
+#     sys.exit()
 ######
 
 if not os.path.exists(blast_out):
