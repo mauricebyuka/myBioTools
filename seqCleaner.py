@@ -23,17 +23,16 @@ forceOverwrite = args.force
 
 
 def getREcNumLens(file): # Get the number of records, lenths of the smallest and largest records.
-    first_record = next(SeqIO.parse(file, 'fasta'))
-    m = p = len(first_record.seq)
-   # p = len(first_record.seq)
+    L = []
     n = 0
-    recs = []
     for rec in SeqIO.parse(file, 'fasta'):
         n += 1
-        if len(rec.seq) < m:
-            m = len(rec.seq)
-        else:
-            p = len(rec.seq)
+        l = len(rec.seq)
+        L.append(l)
+        L.sort()
+        m = L[0]
+        p = L[-1]
+
     return([f'{n:,}', f'{p:,}', f'{m:,}'])
 
 
