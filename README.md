@@ -20,8 +20,8 @@ This is used for quick blast screening of a set of sequences in a fast file. It 
 **Dependancies:** [Command line Blast](https://www.ncbi.nlm.nih.gov/books/NBK279690/), [Biopython](https://biopython.org/wiki/Download).
 
 ```
-usage: quickBlaster.py -q QUERY -ht HIT_OUT [-db BLASTDB] [-h] [-nh NO_HIT] [-s] [-g {archae,bacteria,eukaryota,virus}]
-                       [-ng {archae,bacteria,eukaryota,virus}]
+usage: quickBlaster.py -q QUERY -ht HIT_OUT -db BLASTDB [-h] [-nh NO_HIT] [-p {blastn,blastp}] [-s] [-c] [-t THREADS]
+                       [-g {archae,bacteria,eukaryota,virus}] [-ng {archae,bacteria,eukaryota,virus}]
 
 Required arguments:
   -q QUERY, --query QUERY
@@ -35,13 +35,18 @@ Optional arguments:
   -h, --help            show this help message and exit
   -nh NO_HIT, --no_hit NO_HIT
                         Output file for no hits
-  -s, --short           short query sequences
+  -p {blastn,blastp}, --blastProgram {blastn,blastp}
+                        Blast program to be used
+  -s, --short           Short query sequences
+  -c, --clean           Delete intermediate xml files
+  -t THREADS, --threads THREADS
+                        Threads to be used by blastn [Default: 3/4 of available cpus]
 
 Arguments for filtering:
   -g {archae,bacteria,eukaryota,virus}, --gi {archae,bacteria,eukaryota,virus}
-                        restrict search to gilist
+                        restrict search to specified domain gilist
   -ng {archae,bacteria,eukaryota,virus}, --neg_gi {archae,bacteria,eukaryota,virus}
-                        exclude gilist from search
+                        exclude specified domain gilist from search
 ```
 
 ### 3. seqCleaner
