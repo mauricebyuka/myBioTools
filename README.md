@@ -1,9 +1,10 @@
 # myBioTools
+
 This repository contains the scripts that automate some of the tasks that I perform on a regular basis. They were not designed with a general case usage in mind but rather for perfoming specific tasks, although some of them may allow some level of flexibility. Below is a list of the scripts and their usage.
 
 ### 1. biosampleParser
 
-This is a Jupyter notebook containg the code for parsing and extract metadata from an xml file with biosample information. The parsed file (the `all_biosamples` variable) can be the result of search on NCBI's [Biosample database](https://www.ncbi.nlm.nih.gov/biosample/). If the contains data for multiple organisms, the species of interest has to be specified (the `species` variable). Cells that can be edited begin with the comment: `# Edit this cell` or `# Can be edited`. I believe the search can also be automated.
+This is a Jupyter notebook containg the code for parsing and extract metadata from an XML file with biosample information. The parsed file (the `all_biosamples` variable) can be the result of search on NCBI's [Biosample database](https://www.ncbi.nlm.nih.gov/biosample/). If the XML FILE contains data for multiple organisms, the species of interest has to be specified (the `species` variable). Cells that can be edited begin with the comment: `# Edit this cell` or `# Can be edited`. I believe the search can also be automated.
 
 #### Example
 
@@ -53,7 +54,7 @@ Arguments for filtering:
 
 The script will take a fasta file and remove sequences that are shorter than a specified minimum length. It will report the number of records, the largest and shorted records for the input and output files. There are multiple tools to do the same task.
 
-**Dependancies:**  [Biopython](https://biopython.org/wiki/Download).
+**Dependancies:** [Biopython](https://biopython.org/wiki/Download).
 
 ```
 usage: seqCleaner.py [-h] -in INPUT_FASTA [-out OUTPUT_FASTA] [-min MIN_SEQLEN] [-f]
@@ -72,11 +73,11 @@ optional arguments:
 
 ### 4. mappingQuant
 
-Teh script works on a collection of pairs of alignment (bam) files : raw files and dedupped files (after removal of aptical and PCR duplicates). The script outputs a table with mapping statistics. At this point, I use the script to works with the output files from the [GenMapViz](https://github.com/mauricebyuka/GenMapViz) program (**Not yet public!**). Raw bam files have to end in _raw.bam and dedupped files in _dedupped.bam.
+Teh script works on a collection of pairs of alignment (bam) files : raw files and dedupped files (after removal of aptical and PCR duplicates). The script outputs a table with mapping statistics. At this point, I use the script to works with the output files from the [GenMapViz](https://github.com/mauricebyuka/GenMapViz) program (**Not yet public!**). Raw bam files have to end in \_raw.bam and dedupped files in \_dedupped.bam.
 
 Working on making it more flexible.
 
-**Dependancies:**  [SAMtools](http://www.htslib.org/).
+**Dependancies:** [SAMtools](http://www.htslib.org/).
 
 ```
 optional arguments:
@@ -89,6 +90,3 @@ Required arguments:
                         Output file
 
 ```
-
-
-
